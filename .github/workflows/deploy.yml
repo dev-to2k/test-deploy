@@ -10,9 +10,19 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build_and_preview:
 
     runs-on: ubuntu-latest
+     env:
+      REACT_APP_FIREBASE_API_KEY: AIzaSyAP5rWPodsaWBWxUrYx5D-fMoRr7QL0Tno
+      REACT_APP_FIREBASE_DOMAIN: test-deploy-3435c.firebaseapp.com
+      REACT_APP_FIREBASE_PROJECT_ID: test-deploy-3435c
+      REACT_APP_FIREBASE_STORAGE_BUCKET: test-deploy-3435c.appspot.com
+      REACT_APP_FIREBASE_SENDER_ID: 662420440891
+      REACT_APP_FIREBASE_APP_ID: 1:662420440891:web:1613b9f589120b23dad91e
+      REACT_APP_FIREBASE_MEASUREMENT_ID: G-V0M2QEJV0W
+      REACT_APP_ENVIRONMENT: staging
+      NO_TLS: true
 
     strategy:
       matrix:
@@ -26,6 +36,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - uses: FirebaseExtended/action-hosting-deploy@v0
+      with:
+        repoToken: "${{ secrets.GITHUB_TOKEN }}"
+        firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+        expires: 30d
+        projectId: test-deploy-3435c
+        channelId: live
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
